@@ -1,16 +1,17 @@
 
 import { useState } from 'react';
-import { Menu, X, Phone, MapPin } from 'lucide-react';
+import { Menu, X, Phone, MapPin, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import CartDrawer from '@/components/CartDrawer';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const navigation = [
-    { name: 'Home', href: '#home' },
-    { name: 'Menu', href: '#menu' },
-    { name: 'About', href: '#about' },
-    { name: 'Contact', href: '#contact' },
+    { name: 'Home', href: '/' },
+    { name: 'Menu', href: '/menu' },
+    { name: 'About', href: '/about' },
+    { name: 'Contact', href: '/#contact' },
   ];
 
   return (
@@ -37,19 +38,42 @@ const Header = () => {
             ))}
           </nav>
 
-          {/* Contact Info */}
+          {/* Contact Info & Actions */}
           <div className="hidden lg:flex items-center space-x-4">
             <div className="flex items-center text-sm text-grill-smoke">
               <Phone className="w-4 h-4 mr-1" />
               (555) 123-GRILL
             </div>
+            <CartDrawer />
+            <Button 
+              variant="outline" 
+              size="icon" 
+              className="bg-white border-primary text-primary hover:bg-primary hover:text-white"
+            >
+              <User className="w-5 h-5" />
+            </Button>
+            <Button 
+              onClick={() => window.location.href = '/checkout'}
+              variant="outline"
+              className="bg-white border-primary text-primary hover:bg-primary hover:text-white"
+            >
+              Checkout
+            </Button>
             <Button className="bg-primary hover:bg-primary/90">
               Reserve Table
             </Button>
           </div>
 
-          {/* Mobile menu button */}
-          <div className="md:hidden">
+          {/* Mobile menu button and cart */}
+          <div className="md:hidden flex items-center space-x-2">
+            <CartDrawer />
+            <Button 
+              variant="outline" 
+              size="icon" 
+              className="bg-white border-primary text-primary hover:bg-primary hover:text-white"
+            >
+              <User className="w-5 h-5" />
+            </Button>
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="text-grill-smoke hover:text-primary"
@@ -79,9 +103,18 @@ const Header = () => {
                 <Phone className="w-4 h-4 mr-2" />
                 (555) 123-GRILL
               </div>
-              <Button className="w-full bg-primary hover:bg-primary/90">
-                Reserve Table
-              </Button>
+              <div className="space-y-2">
+                <Button 
+                  onClick={() => window.location.href = '/checkout'}
+                  variant="outline"
+                  className="w-full bg-white border-primary text-primary hover:bg-primary hover:text-white"
+                >
+                  Checkout
+                </Button>
+                <Button className="w-full bg-primary hover:bg-primary/90">
+                  Reserve Table
+                </Button>
+              </div>
             </div>
           </div>
         </div>
