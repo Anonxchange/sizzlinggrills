@@ -1,5 +1,5 @@
-
 import { Facebook, Instagram, Twitter, Heart } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const Footer = () => {
   const socialLinks = [
@@ -9,9 +9,24 @@ const Footer = () => {
   ];
 
   const footerLinks = {
-    'Quick Links': ['Home', 'Menu', 'About', 'Contact'],
-    'Services': ['Dine In', 'Takeout', 'Catering', 'Private Events'],
-    'Info': ['Hours', 'Parking', 'Gift Cards', 'Careers']
+    'Quick Links': [
+      { name: 'Home', path: '/' },
+      { name: 'Menu', path: '/menu' },
+      { name: 'About', path: '/about' },
+      { name: 'Contact', path: '/contact' }
+    ],
+    'Services': [
+      { name: 'Dine In', path: '/services/dine-in' },
+      { name: 'Takeout', path: '/services/takeout' },
+      { name: 'Catering', path: '/services/catering' },
+      { name: 'Private Events', path: '/services/events' }
+    ],
+    'Info': [
+      { name: 'Hours', path: '/info/hours' },
+      { name: 'Parking', path: '/info/parking' },
+      { name: 'Gift Cards', path: '/info/gift-cards' },
+      { name: 'Careers', path: '/info/careers' }
+    ]
   };
 
   return (
@@ -24,7 +39,7 @@ const Footer = () => {
               Sizzling Grill
             </h3>
             <p className="text-gray-300 mb-6 leading-relaxed">
-              Where passion meets flavor. Experience the finest grilled cuisine 
+              Where passion meets flavor. Experience the finest grilled cuisine
               crafted with love and served with pride.
             </p>
             <div className="flex space-x-4">
@@ -46,14 +61,14 @@ const Footer = () => {
             <div key={title}>
               <h4 className="text-lg font-semibold mb-4 text-primary">{title}</h4>
               <ul className="space-y-2">
-                {links.map((link) => (
-                  <li key={link}>
-                    <a 
-                      href="#" 
+                {links.map((link, index) => (
+                  <li key={`${title}-${link.name}-${index}`}>
+                    <Link
+                      to={link.path}
                       className="text-gray-300 hover:text-primary transition-colors duration-200"
                     >
-                      {link}
-                    </a>
+                      {link.name}
+                    </Link>
                   </li>
                 ))}
               </ul>
