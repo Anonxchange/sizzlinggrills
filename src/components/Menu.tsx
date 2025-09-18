@@ -5,11 +5,16 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useCart } from '@/contexts/CartContext';
 import { formatCurrency } from '@/lib/utils';
+import { useState } from 'react';
 
 const Menu = () => {
   const { addItem } = useCart();
+  const [activeCategory, setActiveCategory] = useState('All');
+
+  const categories = ['All', 'Steaks', 'Wings', 'Vegetables', 'Burgers', 'Ribs', 'Seafood'];
 
   const menuItems = [
+    // Steaks
     {
       id: 1,
       name: "Wagyu Ribeye Steak",
@@ -17,54 +22,189 @@ const Menu = () => {
       priceNGN: 52000,
       image: "https://images.unsplash.com/photo-1558030006-450675393462?auto=format&fit=crop&w=500&q=80",
       popular: true,
-      spicy: false
+      spicy: false,
+      category: "Steaks"
     },
     {
       id: 2,
-      name: "BBQ Smoked Brisket",
-      description: "12-hour smoked brisket with our signature dry rub and tangy sauce",
-      priceNGN: 22400,
-      image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=500&q=80",
+      name: "Premium Grilled Steak",
+      description: "Tender ribeye steak grilled to perfection with our signature sauce",
+      priceNGN: 45000,
+      image: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=500&q=80",
       popular: true,
-      spicy: false
+      spicy: false,
+      category: "Steaks"
     },
     {
       id: 3,
-      name: "Spicy Grilled Chicken",
-      description: "Marinated chicken breast with jalapeño lime glaze and cilantro",
-      priceNGN: 17600,
-      image: "https://images.unsplash.com/photo-1598515214211-89d3c73ae83b?auto=format&fit=crop&w=500&q=80",
+      name: "T-Bone Steak",
+      description: "Classic T-bone steak with garlic butter and grilled onions",
+      priceNGN: 38000,
+      image: "https://images.unsplash.com/photo-1615937722923-67f6deaf2cc9?auto=format&fit=crop&w=500&q=80",
       popular: false,
-      spicy: true
+      spicy: false,
+      category: "Steaks"
     },
+    // Wings
     {
       id: 4,
-      name: "Grilled Salmon Fillet",
-      description: "Atlantic salmon with lemon herb seasoning and grilled vegetables",
-      priceNGN: 25600,
-      image: "https://images.unsplash.com/photo-1467003909585-2f8a72700288?auto=format&fit=crop&w=500&q=80",
-      popular: false,
-      spicy: false
+      name: "Buffalo Wings",
+      description: "Crispy wings tossed in spicy buffalo sauce with blue cheese dip",
+      priceNGN: 15600,
+      image: "https://images.unsplash.com/photo-1527477396000-e27163b481c2?auto=format&fit=crop&w=500&q=80",
+      popular: true,
+      spicy: true,
+      category: "Wings"
     },
     {
       id: 5,
-      name: "BBQ Pork Ribs",
-      description: "Fall-off-the-bone ribs with smoky BBQ sauce and coleslaw",
-      priceNGN: 20800,
-      image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=500&q=80",
-      popular: true,
-      spicy: false
+      name: "BBQ Wings",
+      description: "Smoky BBQ wings with tangy sauce and celery sticks",
+      priceNGN: 14400,
+      image: "https://images.unsplash.com/photo-1608039755401-742074f0548d?auto=format&fit=crop&w=500&q=80",
+      popular: false,
+      spicy: false,
+      category: "Wings"
     },
     {
       id: 6,
+      name: "Honey Garlic Wings",
+      description: "Sweet and savory wings glazed with honey garlic sauce",
+      priceNGN: 16800,
+      image: "https://images.unsplash.com/photo-1562967914-608f82629710?auto=format&fit=crop&w=500&q=80",
+      popular: false,
+      spicy: false,
+      category: "Wings"
+    },
+    // Vegetables
+    {
+      id: 7,
       name: "Grilled Vegetable Platter",
       description: "Seasonal vegetables grilled with balsamic glaze and fresh herbs",
       priceNGN: 14400,
       image: "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=500&q=80",
       popular: false,
-      spicy: false
+      spicy: false,
+      category: "Vegetables"
+    },
+    {
+      id: 8,
+      name: "Grilled Portobello Mushroom",
+      description: "Large portobello cap grilled with herbs and topped with cheese",
+      priceNGN: 12800,
+      image: "https://images.unsplash.com/photo-1506976785307-8732e854ad03?auto=format&fit=crop&w=500&q=80",
+      popular: false,
+      spicy: false,
+      category: "Vegetables"
+    },
+    {
+      id: 9,
+      name: "Mediterranean Vegetable Skewers",
+      description: "Bell peppers, zucchini, and cherry tomatoes with olive oil and herbs",
+      priceNGN: 11200,
+      image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?auto=format&fit=crop&w=500&q=80",
+      popular: false,
+      spicy: false,
+      category: "Vegetables"
+    },
+    // Burgers
+    {
+      id: 10,
+      name: "The Grill Master Burger",
+      description: "Double beef patty with bacon, cheese, lettuce, and special sauce",
+      priceNGN: 19200,
+      image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=500&q=80",
+      popular: true,
+      spicy: false,
+      category: "Burgers"
+    },
+    {
+      id: 11,
+      name: "BBQ Bacon Burger",
+      description: "Juicy beef patty with crispy bacon, BBQ sauce, and onion rings",
+      priceNGN: 17600,
+      image: "https://images.unsplash.com/photo-1571091718767-18b5b1457add?auto=format&fit=crop&w=500&q=80",
+      popular: false,
+      spicy: false,
+      category: "Burgers"
+    },
+    {
+      id: 12,
+      name: "Spicy Jalapeño Burger",
+      description: "Beef patty with jalapeños, pepper jack cheese, and spicy mayo",
+      priceNGN: 18400,
+      image: "https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=500&q=80",
+      popular: false,
+      spicy: true,
+      category: "Burgers"
+    },
+    // Ribs
+    {
+      id: 13,
+      name: "BBQ Pork Ribs",
+      description: "Fall-off-the-bone ribs with smoky BBQ sauce and coleslaw",
+      priceNGN: 20800,
+      image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=500&q=80",
+      popular: true,
+      spicy: false,
+      category: "Ribs"
+    },
+    {
+      id: 14,
+      name: "BBQ Smoked Brisket",
+      description: "12-hour smoked brisket with our signature dry rub and tangy sauce",
+      priceNGN: 22400,
+      image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=500&q=80",
+      popular: true,
+      spicy: false,
+      category: "Ribs"
+    },
+    {
+      id: 15,
+      name: "Spicy Baby Back Ribs",
+      description: "Tender baby back ribs with our signature spicy rub",
+      priceNGN: 24000,
+      image: "https://images.unsplash.com/photo-1529193591184-b1d58069ecdd?auto=format&fit=crop&w=500&q=80",
+      popular: false,
+      spicy: true,
+      category: "Ribs"
+    },
+    // Seafood
+    {
+      id: 16,
+      name: "Grilled Salmon Fillet",
+      description: "Atlantic salmon with lemon herb seasoning and grilled vegetables",
+      priceNGN: 25600,
+      image: "https://images.unsplash.com/photo-1467003909585-2f8a72700288?auto=format&fit=crop&w=500&q=80",
+      popular: false,
+      spicy: false,
+      category: "Seafood"
+    },
+    {
+      id: 17,
+      name: "Grilled Shrimp Skewers",
+      description: "Jumbo shrimp marinated in garlic and herbs, grilled to perfection",
+      priceNGN: 22400,
+      image: "https://images.unsplash.com/photo-1565680018434-b513d5e5fd47?auto=format&fit=crop&w=500&q=80",
+      popular: false,
+      spicy: false,
+      category: "Seafood"
+    },
+    {
+      id: 18,
+      name: "Grilled Sea Bass",
+      description: "Fresh sea bass with Mediterranean herbs and lemon butter",
+      priceNGN: 28800,
+      image: "https://images.unsplash.com/photo-1559847844-d724f3d4e926?auto=format&fit=crop&w=500&q=80",
+      popular: false,
+      spicy: false,
+      category: "Seafood"
     }
   ];
+
+  const filteredItems = activeCategory === 'All' 
+    ? menuItems 
+    : menuItems.filter(item => item.category === activeCategory);
 
   const handleAddToCart = (item: any) => {
     addItem(item, 1);
@@ -83,8 +223,26 @@ const Menu = () => {
           </p>
         </div>
 
+        {/* Category Filter Buttons */}
+        <div className="flex flex-wrap justify-center gap-3 mb-12">
+          {categories.map((category) => (
+            <Button
+              key={category}
+              variant={activeCategory === category ? "default" : "outline"}
+              onClick={() => setActiveCategory(category)}
+              className={`rounded-full px-6 py-2 transition-all duration-200 ${
+                activeCategory === category
+                  ? 'bg-primary text-white hover:bg-primary/90'
+                  : 'bg-white text-grill-charcoal border-grill-charcoal hover:bg-primary hover:text-white'
+              }`}
+            >
+              {category}
+            </Button>
+          ))}
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {menuItems.map((item, index) => (
+          {filteredItems.map((item, index) => (
             <Card 
               key={item.id} 
               className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 animate-scale-in border-0 bg-white"
@@ -109,6 +267,11 @@ const Menu = () => {
                       Spicy
                     </Badge>
                   )}
+                </div>
+                <div className="absolute top-4 right-4">
+                  <Badge variant="secondary" className="bg-black/70 text-white">
+                    {item.category}
+                  </Badge>
                 </div>
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               </div>
@@ -137,6 +300,14 @@ const Menu = () => {
             </Card>
           ))}
         </div>
+
+        {filteredItems.length === 0 && (
+          <div className="text-center py-12">
+            <p className="text-xl text-grill-smoke">
+              No items found in the {activeCategory} category.
+            </p>
+          </div>
+        )}
       </div>
     </section>
   );
