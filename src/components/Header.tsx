@@ -2,16 +2,20 @@
 import { useState } from 'react';
 import { Menu, X, Phone, MapPin, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Link, useLocation } from 'react-router-dom';
 import CartDrawer from '@/components/CartDrawer';
+import { useCart } from '@/contexts/CartContext';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const location = useLocation();
+  const { getTotalItems } = useCart();
 
   const navigation = [
     { name: 'Home', href: '/' },
     { name: 'Menu', href: '/menu' },
     { name: 'About', href: '/about' },
-    { name: 'Contact', href: '/#contact' },
+    { name: 'Contact', href: '/contact' },
   ];
 
   return (
@@ -20,21 +24,25 @@ const Header = () => {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex-shrink-0">
-            <h1 className="text-2xl font-bold text-primary font-playfair">
-              Sizzling Grill
-            </h1>
+            <Link to="/">
+              <h1 className="text-2xl font-bold text-primary font-playfair hover:text-primary/80 transition-colors">
+                Sizzling Grill
+              </h1>
+            </Link>
           </div>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
             {navigation.map((item) => (
-              <a
+              <Link
                 key={item.name}
-                href={item.href}
-                className="text-grill-smoke hover:text-primary transition-colors duration-200 font-medium"
+                to={item.href}
+                className={`text-grill-smoke hover:text-primary transition-colors duration-200 font-medium ${
+                  location.pathname === item.href ? 'text-primary border-b-2 border-primary' : ''
+                }`}
               >
                 {item.name}
-              </a>
+              </Link>
             ))}
           </nav>
 
@@ -44,7 +52,7 @@ const Header = () => {
               <Phone className="w-4 h-4 mr-1" />
               (555) 123-GRILL
             </div>
-            <CartDrawer />
+            {getTotalItems() > 0 && <CartDrawer />}
             <Button 
               variant="outline" 
               size="icon" 
@@ -52,21 +60,23 @@ const Header = () => {
             >
               <User className="w-5 h-5" />
             </Button>
-            <Button 
-              onClick={() => window.location.href = '/checkout'}
-              variant="outline"
-              className="bg-white border-primary text-primary hover:bg-primary hover:text-white"
-            >
-              Checkout
-            </Button>
-            <Button className="bg-primary hover:bg-primary/90">
-              Reserve Table
-            </Button>
+            <Link to="/checkout">
+              <Button 
+                variant="outline"
+                className="bg-white border-primary text-primary hover:bg-primary hover:text-white"
+              >
+                Checkout
+              </Button>
+            </Link>
+            <Link to="/reservations">
+              <Button className="bg-primary hover:bg-primary/90">
+                Reserve Table
+              </Button>
+            </Link>
           </div>
 
           {/* Mobile menu button and cart */}
           <div className="md:hidden flex items-center space-x-2">
-            <CartDrawer />
             <Button 
               variant="outline" 
               size="icon" 
@@ -89,14 +99,14 @@ const Header = () => {
         <div className="md:hidden bg-white border-t border-border animate-fade-in">
           <div className="px-4 py-3 space-y-3">
             {navigation.map((item) => (
-              <a
+              <Link
                 key={item.name}
-                href={item.href}
+                to={item.href}
                 className="block text-grill-smoke hover:text-primary transition-colors duration-200 font-medium"
                 onClick={() => setIsMenuOpen(false)}
               >
                 {item.name}
-              </a>
+              </Link>
             ))}
             <div className="pt-3 border-t border-border">
               <div className="flex items-center text-sm text-grill-smoke mb-3">
@@ -104,16 +114,23 @@ const Header = () => {
                 (555) 123-GRILL
               </div>
               <div className="space-y-2">
-                <Button 
-                  onClick={() => window.location.href = '/checkout'}
-                  variant="outline"
-                  className="w-full bg-white border-primary text-primary hover:bg-primary hover:text-white"
-                >
-                  Checkout
-                </Button>
-                <Button className="w-full bg-primary hover:bg-primary/90">
-                  Reserve Table
-                </Button>
+                <Link to="/checkout" className="block">
+                  <Button 
+                    variant="outline"
+                    className="w-full bg-white border-primary text-primary hover:bg-primary hover:text-white"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Checkout
+                  </Button>
+                </Link>
+                <Link to="/reservations" className="block">
+                  <Button 
+                    className="w-full bg-primary hover:bg-primary/90"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Reserve Table
+                  </Button>
+                </Link>
               </div>
             </div>
           </div>
