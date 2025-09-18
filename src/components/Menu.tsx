@@ -1,15 +1,20 @@
 
-import { Flame, Star } from 'lucide-react';
+import { Flame, Star, ShoppingCart } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { useCart } from '@/contexts/CartContext';
+import { formatCurrency } from '@/lib/utils';
 
 const Menu = () => {
+  const { addItem } = useCart();
+
   const menuItems = [
     {
       id: 1,
       name: "Wagyu Ribeye Steak",
       description: "Premium 16oz wagyu ribeye grilled to perfection with herb butter",
-      price: "$65",
+      priceNGN: 52000,
       image: "https://images.unsplash.com/photo-1558030006-450675393462?auto=format&fit=crop&w=500&q=80",
       popular: true,
       spicy: false
@@ -18,7 +23,7 @@ const Menu = () => {
       id: 2,
       name: "BBQ Smoked Brisket",
       description: "12-hour smoked brisket with our signature dry rub and tangy sauce",
-      price: "$28",
+      priceNGN: 22400,
       image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=500&q=80",
       popular: true,
       spicy: false
@@ -27,7 +32,7 @@ const Menu = () => {
       id: 3,
       name: "Spicy Grilled Chicken",
       description: "Marinated chicken breast with jalapeño lime glaze and cilantro",
-      price: "$22",
+      priceNGN: 17600,
       image: "https://images.unsplash.com/photo-1598515214211-89d3c73ae83b?auto=format&fit=crop&w=500&q=80",
       popular: false,
       spicy: true
@@ -36,7 +41,7 @@ const Menu = () => {
       id: 4,
       name: "Grilled Salmon Fillet",
       description: "Atlantic salmon with lemon herb seasoning and grilled vegetables",
-      price: "$32",
+      priceNGN: 25600,
       image: "https://images.unsplash.com/photo-1467003909585-2f8a72700288?auto=format&fit=crop&w=500&q=80",
       popular: false,
       spicy: false
@@ -45,7 +50,7 @@ const Menu = () => {
       id: 5,
       name: "BBQ Pork Ribs",
       description: "Fall-off-the-bone ribs with smoky BBQ sauce and coleslaw",
-      price: "$26",
+      priceNGN: 20800,
       image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=500&q=80",
       popular: true,
       spicy: false
@@ -54,12 +59,16 @@ const Menu = () => {
       id: 6,
       name: "Grilled Vegetable Platter",
       description: "Seasonal vegetables grilled with balsamic glaze and fresh herbs",
-      price: "$18",
+      priceNGN: 14400,
       image: "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=500&q=80",
       popular: false,
       spicy: false
     }
   ];
+
+  const handleAddToCart = (item: any) => {
+    addItem(item, 1);
+  };
 
   return (
     <section id="menu" className="py-20 bg-warm-cream">
@@ -110,12 +119,20 @@ const Menu = () => {
                     {item.name}
                   </h3>
                   <span className="text-2xl font-bold text-primary">
-                    {item.price}
+                    {formatCurrency(item.priceNGN)}
                   </span>
                 </div>
-                <p className="text-grill-smoke leading-relaxed">
+                <p className="text-grill-smoke leading-relaxed mb-4">
                   {item.description}
                 </p>
+                <Button
+                  onClick={() => handleAddToCart(item)}
+                  className="w-full bg-primary hover:bg-primary/90 text-white"
+                  data-testid={`button-add-to-cart-${item.id}`}
+                >
+                  <ShoppingCart className="w-4 h-4 mr-2" />
+                  Add to Cart
+                </Button>
               </CardContent>
             </Card>
           ))}
