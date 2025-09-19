@@ -1,4 +1,4 @@
-import { MapPin, Phone, Mail, Clock, Send } from 'lucide-react';
+import { MapPin, Phone, Mail, Clock, Send, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -16,7 +16,7 @@ const ContactPage = () => {
     {
       icon: Phone,
       title: 'Phone',
-      details: ['+234 123 456 7890', '+234 987 654 3210']
+      details: ['+2348145892901', '+2347045892901 (WhatsApp)']
     },
     {
       icon: Mail,
@@ -67,9 +67,12 @@ const ContactPage = () => {
                   </CardHeader>
                   <CardContent>
                     {info.details.map((detail, index) => (
-                      <p key={index} className="text-grill-smoke text-sm mb-1">
-                        {detail}
-                      </p>
+                      <div key={index} className="flex items-center justify-center gap-2 text-grill-smoke text-sm mb-1">
+                        {detail.includes('WhatsApp') && (
+                          <MessageCircle className="w-4 h-4 text-green-500" />
+                        )}
+                        <span>{detail}</span>
+                      </div>
                     ))}
                   </CardContent>
                 </Card>
