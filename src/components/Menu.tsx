@@ -494,9 +494,9 @@ const Menu = () => {
     }
 
     if (isHomepage && activeCategory === 'All' && !searchQuery.trim()) {
-      // Shuffle and take first 8 items for homepage
+      // Shuffle and take first 13 items for homepage
       const shuffled = [...filteredItems].sort(() => Math.random() - 0.5);
-      return shuffled.slice(0, 8);
+      return shuffled.slice(0, 13);
     }
     
     // Filter by category if not 'All'
