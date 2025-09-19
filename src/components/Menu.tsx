@@ -11,16 +11,24 @@ import { useLocation, Link } from 'react-router-dom';
 const Menu = () => {
   const { addItem } = useCart();
   const [activeCategory, setActiveCategory] = useState('All');
+  const [activeSubcategory, setActiveSubcategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   const location = useLocation();
   const isHomepage = location.pathname === '/';
 
-  // ✅ New categories
+  // ✅ Main categories
   const categories = ['All', 'Food', 'Snacks & Desserts', 'Drinks'];
+
+  // ✅ Subcategories map
+  const subcategoriesMap: Record<string, string[]> = {
+    Food: ['All', 'Grilling', 'Shawarma', 'Soups', 'Full Package'],
+    'Snacks & Desserts': ['All', 'Parfait', 'Cakes', 'Pastries', 'Chops'],
+    Drinks: ['All', 'Chapman', 'Soft Drinks', 'Alcohol Drinks', 'Wine']
+  };
 
   // ✅ Menu items regrouped
   const menuItems = [
-    // Food
+    // Food → Grilling
     {
       id: 1,
       name: "Wagyu Ribeye Steak",
@@ -29,7 +37,8 @@ const Menu = () => {
       image: "/IMG_3500.jpeg",
       popular: true,
       spicy: false,
-      category: "Food"
+      category: "Food",
+      subcategory: "Grilling"
     },
     {
       id: 2,
@@ -39,22 +48,50 @@ const Menu = () => {
       image: "/IMG_3505.jpeg",
       popular: true,
       spicy: false,
-      category: "Food"
+      category: "Food",
+      subcategory: "Grilling"
     },
+
+    // Food → Shawarma
     {
       id: 3,
-      name: "T-Bone Steak",
-      description: "Classic T-bone steak with garlic butter and grilled onions",
-      priceNGN: 38000,
-      image: "/IMG_3631.jpeg",
-      popular: false,
+      name: "Shawarma Deluxe",
+      description: "Loaded chicken & beef shawarma with cheese and extra sauce",
+      priceNGN: 9000,
+      image: "/shawarma.jpeg",
+      popular: true,
       spicy: false,
-      category: "Food"
+      category: "Food",
+      subcategory: "Shawarma"
     },
-    // … all other Steaks, Wings, Vegetables, Burgers, Ribs, Seafood, Chicken, Pork, Appetizers
-    // just keep them under "Food"
 
-    // Snacks & Desserts
+    // Food → Soups
+    {
+      id: 4,
+      name: "Goat Meat Pepper Soup",
+      description: "Spicy Nigerian goat meat pepper soup",
+      priceNGN: 7000,
+      image: "/peppersoup.jpeg",
+      popular: false,
+      spicy: true,
+      category: "Food",
+      subcategory: "Soups"
+    },
+
+    // Food → Full Package
+    {
+      id: 5,
+      name: "Jollof Rice Full Package",
+      description: "Rice, chicken, plantain and salad",
+      priceNGN: 12000,
+      image: "/jollof_package.jpeg",
+      popular: true,
+      spicy: false,
+      category: "Food",
+      subcategory: "Full Package"
+    },
+
+    // Snacks & Desserts → Parfait
     {
       id: 50,
       name: "Parfait",
@@ -63,8 +100,10 @@ const Menu = () => {
       image: "/parfait.jpeg",
       popular: true,
       spicy: false,
-      category: "Snacks & Desserts"
+      category: "Snacks & Desserts",
+      subcategory: "Parfait"
     },
+    // Snacks & Desserts → Pastries
     {
       id: 51,
       name: "Meat Pie",
@@ -73,8 +112,10 @@ const Menu = () => {
       image: "/meatpie.jpeg",
       popular: false,
       spicy: false,
-      category: "Snacks & Desserts"
+      category: "Snacks & Desserts",
+      subcategory: "Pastries"
     },
+    // Snacks & Desserts → Cakes
     {
       id: 52,
       name: "Chocolate Cake Slice",
@@ -83,10 +124,11 @@ const Menu = () => {
       image: "/cake.jpeg",
       popular: false,
       spicy: false,
-      category: "Snacks & Desserts"
+      category: "Snacks & Desserts",
+      subcategory: "Cakes"
     },
 
-    // Drinks
+    // Drinks → Chapman
     {
       id: 60,
       name: "Chapman",
@@ -95,8 +137,10 @@ const Menu = () => {
       image: "/chapman.jpeg",
       popular: true,
       spicy: false,
-      category: "Drinks"
+      category: "Drinks",
+      subcategory: "Chapman"
     },
+    // Drinks → Soft Drinks
     {
       id: 61,
       name: "Soft Drink (Coke)",
@@ -105,8 +149,10 @@ const Menu = () => {
       image: "/coke.jpeg",
       popular: false,
       spicy: false,
-      category: "Drinks"
+      category: "Drinks",
+      subcategory: "Soft Drinks"
     },
+    // Drinks → Wine
     {
       id: 62,
       name: "Red Wine",
@@ -115,8 +161,10 @@ const Menu = () => {
       image: "/wine.jpeg",
       popular: false,
       spicy: false,
-      category: "Drinks"
+      category: "Drinks",
+      subcategory: "Wine"
     },
+    // Drinks → Alcohol Drinks
     {
       id: 63,
       name: "Beer",
@@ -125,7 +173,8 @@ const Menu = () => {
       image: "/beer.jpeg",
       popular: false,
       spicy: false,
-      category: "Drinks"
+      category: "Drinks",
+      subcategory: "Alcohol Drinks"
     }
   ];
 
@@ -148,10 +197,14 @@ const Menu = () => {
 
     if (activeCategory !== 'All') {
       filteredItems = filteredItems.filter(item => item.category === activeCategory);
+
+      if (activeSubcategory !== 'All') {
+        filteredItems = filteredItems.filter(item => item.subcategory === activeSubcategory);
+      }
     }
 
     return filteredItems;
-  }, [isHomepage, activeCategory, searchQuery]);
+  }, [isHomepage, activeCategory, activeSubcategory, searchQuery]);
 
   const handleAddToCart = (item: any) => {
     addItem(item, 1);
@@ -185,13 +238,17 @@ const Menu = () => {
           </div>
         )}
 
+        {/* Main categories */}
         {!isHomepage && (
-          <div className="flex flex-wrap justify-center gap-3 mb-12">
+          <div className="flex flex-wrap justify-center gap-3 mb-6">
             {categories.map((category) => (
               <Button
                 key={category}
                 variant={activeCategory === category ? "default" : "outline"}
-                onClick={() => setActiveCategory(category)}
+                onClick={() => {
+                  setActiveCategory(category);
+                  setActiveSubcategory('All'); // reset subcategory when category changes
+                }}
                 className={`rounded-full px-6 py-2 transition-all duration-200 ${
                   activeCategory === category
                     ? 'bg-primary text-white hover:bg-primary/90'
@@ -204,6 +261,27 @@ const Menu = () => {
           </div>
         )}
 
+        {/* Subcategories */}
+        {!isHomepage && activeCategory !== 'All' && subcategoriesMap[activeCategory] && (
+          <div className="flex flex-wrap justify-center gap-2 mb-10">
+            {subcategoriesMap[activeCategory].map((sub) => (
+              <Button
+                key={sub}
+                variant={activeSubcategory === sub ? "default" : "outline"}
+                onClick={() => setActiveSubcategory(sub)}
+                className={`rounded-full px-4 py-1 text-sm ${
+                  activeSubcategory === sub
+                    ? 'bg-primary text-white hover:bg-primary/90'
+                    : 'bg-white text-grill-charcoal border-grill-charcoal hover:bg-primary hover:text-white'
+                }`}
+              >
+                {sub}
+              </Button>
+            ))}
+          </div>
+        )}
+
+        {/* Menu grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {displayItems.map((item, index) => (
             <Card 
@@ -233,10 +311,9 @@ const Menu = () => {
                 </div>
                 <div className="absolute top-4 right-4">
                   <Badge variant="secondary" className="bg-black/70 text-white">
-                    {item.category}
+                    {item.subcategory}
                   </Badge>
                 </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               </div>
               
               <CardContent className="p-6">
@@ -264,13 +341,13 @@ const Menu = () => {
           ))}
         </div>
 
+        {/* Empty state */}
         {displayItems.length === 0 && (
           <div className="text-center py-12">
             <p className="text-xl text-grill-smoke">
               {searchQuery.trim() 
                 ? `No items found for "${searchQuery}"` 
-                : `No items found in the ${activeCategory} category.`
-              }
+                : `No items found in the ${activeCategory} category.`}
             </p>
             {searchQuery.trim() && (
               <Button
