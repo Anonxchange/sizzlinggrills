@@ -1,9 +1,9 @@
-
 import { useState } from 'react';
 import { Menu, X, Phone, MapPin, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link, useLocation } from 'react-router-dom';
 import CartDrawer from '@/components/CartDrawer';
+import ProfileDropdown from '@/components/ProfileDropdown';
 import { useCart } from '@/contexts/CartContext';
 
 const Header = () => {
@@ -53,13 +53,7 @@ const Header = () => {
               (555) 123-GRILL
             </div>
             {getTotalItems() > 0 && <CartDrawer />}
-            <Button 
-              variant="outline" 
-              size="icon" 
-              className="bg-white border-primary text-primary hover:bg-primary hover:text-white"
-            >
-              <User className="w-5 h-5" />
-            </Button>
+            <ProfileDropdown />
             <Link to="/checkout">
               <Button 
                 variant="outline"
@@ -77,13 +71,8 @@ const Header = () => {
 
           {/* Mobile menu button and cart */}
           <div className="md:hidden flex items-center space-x-2">
-            <Button 
-              variant="outline" 
-              size="icon" 
-              className="bg-white border-primary text-primary hover:bg-primary hover:text-white"
-            >
-              <User className="w-5 h-5" />
-            </Button>
+            {getTotalItems() > 0 && <CartDrawer />}
+            <ProfileDropdown />
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="text-grill-smoke hover:text-primary"
