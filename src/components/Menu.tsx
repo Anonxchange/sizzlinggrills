@@ -11,185 +11,72 @@ import { useLocation, Link } from 'react-router-dom';
 const Menu = () => {
   const { addItem } = useCart();
   const [activeCategory, setActiveCategory] = useState('All');
-  const [activeSubcategory, setActiveSubcategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   const location = useLocation();
   const isHomepage = location.pathname === '/';
 
-  // ✅ Main categories
+  // ✅ New category structure
   const categories = ['All', 'Food', 'Snacks & Desserts', 'Drinks'];
 
-  // ✅ Subcategories map
-  const subcategoriesMap: Record<string, string[]> = {
-    Food: ['All', 'Grilling', 'Shawarma', 'Soups', 'Full Package'],
-    'Snacks & Desserts': ['All', 'Parfait', 'Cakes', 'Pastries', 'Chops'],
-    Drinks: ['All', 'Chapman', 'Soft Drinks', 'Alcohol Drinks', 'Wine']
-  };
-
-  // ✅ Menu items (clean + regrouped)
+  // ✅ Update all 45 items to "Food"
   const menuItems = [
-    // Food → Grilling
-    {
-      id: 1,
-      name: "Wagyu Ribeye Steak",
-      description: "Premium 16oz wagyu ribeye grilled to perfection with herb butter",
-      priceNGN: 52000,
-      image: "/IMG_3500.jpeg",
-      popular: true,
-      spicy: false,
-      category: "Food",
-      subcategory: "Grilling"
-    },
-    {
-      id: 2,
-      name: "Smoked BBQ Ribs",
-      description: "Slow smoked pork ribs with tangy barbecue glaze",
-      priceNGN: 38000,
-      image: "/IMG_3510.jpeg",
-      popular: false,
-      spicy: false,
-      category: "Food",
-      subcategory: "Grilling"
-    },
-    {
-      id: 3,
-      name: "Grilled Chicken Wings",
-      description: "Charcoal grilled chicken wings with house spices",
-      priceNGN: 15000,
-      image: "/IMG_3515.jpeg",
-      popular: true,
-      spicy: false,
-      category: "Food",
-      subcategory: "Grilling"
-    },
-
-    // Food → Shawarma
-    {
-      id: 10,
-      name: "Shawarma Deluxe",
-      description: "Loaded chicken & beef shawarma with cheese and extra sauce",
-      priceNGN: 9000,
-      image: "/shawarma.jpeg",
-      popular: true,
-      spicy: false,
-      category: "Food",
-      subcategory: "Shawarma"
-    },
-
-    // Food → Soups
-    {
-      id: 20,
-      name: "Goat Meat Pepper Soup",
-      description: "Spicy Nigerian goat meat pepper soup",
-      priceNGN: 7000,
-      image: "/peppersoup.jpeg",
-      popular: false,
-      spicy: true,
-      category: "Food",
-      subcategory: "Soups"
-    },
-
-    // Food → Full Package
-    {
-      id: 30,
-      name: "Jollof Rice Full Package",
-      description: "Rice, chicken, plantain and salad",
-      priceNGN: 12000,
-      image: "/jollof_package.jpeg",
-      popular: true,
-      spicy: false,
-      category: "Food",
-      subcategory: "Full Package"
-    },
-
-    // Snacks & Desserts → Parfait
-    {
-      id: 40,
-      name: "Parfait",
-      description: "Creamy yoghurt parfait with granola and fresh fruits",
-      priceNGN: 6000,
-      image: "/parfait.jpeg",
-      popular: true,
-      spicy: false,
-      category: "Snacks & Desserts",
-      subcategory: "Parfait"
-    },
-    // Snacks & Desserts → Pastries
-    {
-      id: 41,
-      name: "Meat Pie",
-      description: "Classic Nigerian meat pie with beef filling",
-      priceNGN: 2500,
-      image: "/meatpie.jpeg",
-      popular: false,
-      spicy: false,
-      category: "Snacks & Desserts",
-      subcategory: "Pastries"
-    },
-    // Snacks & Desserts → Cakes
-    {
-      id: 42,
-      name: "Chocolate Cake Slice",
-      description: "Rich chocolate cake slice with cream topping",
-      priceNGN: 3500,
-      image: "/cake.jpeg",
-      popular: false,
-      spicy: false,
-      category: "Snacks & Desserts",
-      subcategory: "Cakes"
-    },
-
-    // Drinks → Chapman
-    {
-      id: 50,
-      name: "Chapman",
-      description: "Refreshing Nigerian Chapman cocktail",
-      priceNGN: 3500,
-      image: "/chapman.jpeg",
-      popular: true,
-      spicy: false,
-      category: "Drinks",
-      subcategory: "Chapman"
-    },
-    // Drinks → Soft Drinks
-    {
-      id: 51,
-      name: "Soft Drink (Coke)",
-      description: "Chilled Coca-Cola bottle",
-      priceNGN: 1000,
-      image: "/coke.jpeg",
-      popular: false,
-      spicy: false,
-      category: "Drinks",
-      subcategory: "Soft Drinks"
-    },
-    // Drinks → Wine
-    {
-      id: 52,
-      name: "Red Wine",
-      description: "Premium red wine bottle",
-      priceNGN: 15000,
-      image: "/wine.jpeg",
-      popular: false,
-      spicy: false,
-      category: "Drinks",
-      subcategory: "Wine"
-    },
-    // Drinks → Alcohol Drinks
-    {
-      id: 53,
-      name: "Beer",
-      description: "Cold bottle of premium lager beer",
-      priceNGN: 2000,
-      image: "/beer.jpeg",
-      popular: false,
-      spicy: false,
-      category: "Drinks",
-      subcategory: "Alcohol Drinks"
-    }
+    // Steaks
+    { id: 1, name: "Wagyu Ribeye Steak", description: "Premium 16oz wagyu ribeye grilled to perfection with herb butter", priceNGN: 52000, image: "/IMG_3500.jpeg", popular: true, spicy: false, category: "Food" },
+    { id: 2, name: "Premium Grilled Steak", description: "Tender ribeye steak grilled to perfection with our signature sauce", priceNGN: 45000, image: "/IMG_3505.jpeg", popular: true, spicy: false, category: "Food" },
+    { id: 3, name: "T-Bone Steak", description: "Classic T-bone steak with garlic butter and grilled onions", priceNGN: 38000, image: "/IMG_3631.jpeg", popular: false, spicy: false, category: "Food" },
+    { id: 4, name: "Sirloin Steak", description: "Juicy sirloin steak with rosemary and thyme seasoning", priceNGN: 35000, image: "/IMG_3639.jpeg", popular: false, spicy: false, category: "Food" },
+    { id: 5, name: "Filet Mignon", description: "Tender filet mignon with red wine reduction", priceNGN: 55000, image: "/IMG_3640.jpeg", popular: true, spicy: false, category: "Food" },
+    { id: 6, name: "NY Strip Steak", description: "Classic New York strip with compound butter", priceNGN: 42000, image: "/IMG_3670.jpeg", popular: false, spicy: false, category: "Food" },
+    // Wings
+    { id: 7, name: "Buffalo Wings", description: "Crispy wings tossed in spicy buffalo sauce with blue cheese dip", priceNGN: 15600, image: "/IMG_3672.jpeg", popular: true, spicy: true, category: "Food" },
+    { id: 8, name: "BBQ Wings", description: "Smoky BBQ wings with tangy sauce and celery sticks", priceNGN: 14400, image: "/IMG_3674.jpeg", popular: false, spicy: false, category: "Food" },
+    { id: 9, name: "Honey Garlic Wings", description: "Sweet and savory wings glazed with honey garlic sauce", priceNGN: 16800, image: "/IMG_3676.jpeg", popular: false, spicy: false, category: "Food" },
+    { id: 10, name: "Spicy Korean Wings", description: "Korean-style wings with gochujang glaze", priceNGN: 17200, image: "/IMG_3705.jpeg", popular: false, spicy: true, category: "Food" },
+    { id: 11, name: "Lemon Pepper Wings", description: "Zesty lemon pepper seasoned wings", priceNGN: 15200, image: "/IMG_3740.jpeg", popular: false, spicy: false, category: "Food" },
+    // Vegetables
+    { id: 12, name: "Grilled Vegetable Platter", description: "Seasonal vegetables grilled with balsamic glaze and fresh herbs", priceNGN: 14400, image: "/IMG_3759.jpeg", popular: false, spicy: false, category: "Food" },
+    { id: 13, name: "Grilled Portobello Mushroom", description: "Large portobello cap grilled with herbs and topped with cheese", priceNGN: 12800, image: "/IMG_3813.jpeg", popular: false, spicy: false, category: "Food" },
+    { id: 14, name: "Mediterranean Vegetable Skewers", description: "Bell peppers, zucchini, and cherry tomatoes with olive oil and herbs", priceNGN: 11200, image: "/IMG_3816.jpeg", popular: false, spicy: false, category: "Food" },
+    { id: 15, name: "Grilled Asparagus", description: "Fresh asparagus spears with lemon and parmesan", priceNGN: 10800, image: "/IMG_3822.jpeg", popular: false, spicy: false, category: "Food" },
+    { id: 16, name: "Stuffed Bell Peppers", description: "Grilled bell peppers stuffed with quinoa and herbs", priceNGN: 13600, image: "/IMG_3870.jpeg", popular: false, spicy: false, category: "Food" },
+    // Burgers
+    { id: 17, name: "The Grill Master Burger", description: "Double beef patty with bacon, cheese, lettuce, and special sauce", priceNGN: 19200, image: "/IMG_3882.jpeg", popular: true, spicy: false, category: "Food" },
+    { id: 18, name: "BBQ Bacon Burger", description: "Juicy beef patty with crispy bacon, BBQ sauce, and onion rings", priceNGN: 17600, image: "/IMG_3883.jpeg", popular: false, spicy: false, category: "Food" },
+    { id: 19, name: "Spicy Jalapeño Burger", description: "Beef patty with jalapeños, pepper jack cheese, and spicy mayo", priceNGN: 18400, image: "/IMG_3916.jpeg", popular: false, spicy: true, category: "Food" },
+    { id: 20, name: "Mushroom Swiss Burger", description: "Beef patty topped with sautéed mushrooms and swiss cheese", priceNGN: 16800, image: "/IMG_3978.jpeg", popular: false, spicy: false, category: "Food" },
+    { id: 21, name: "Classic Cheeseburger", description: "Traditional beef patty with cheddar cheese and all the fixings", priceNGN: 15600, image: "/IMG_3984.jpeg", popular: true, spicy: false, category: "Food" },
+    // Ribs
+    { id: 22, name: "BBQ Pork Ribs", description: "Fall-off-the-bone ribs with smoky BBQ sauce and coleslaw", priceNGN: 20800, image: "/IMG_3994.jpeg", popular: true, spicy: false, category: "Food" },
+    { id: 23, name: "BBQ Smoked Brisket", description: "12-hour smoked brisket with our signature dry rub and tangy sauce", priceNGN: 22400, image: "/IMG_3995.jpeg", popular: true, spicy: false, category: "Food" },
+    { id: 24, name: "Spicy Baby Back Ribs", description: "Tender baby back ribs with our signature spicy rub", priceNGN: 24000, image: "/IMG_3996.jpeg", popular: false, spicy: true, category: "Food" },
+    { id: 25, name: "Kansas City Style Ribs", description: "Thick molasses-based sauce on tender pork ribs", priceNGN: 23200, image: "/IMG_3997.jpeg", popular: false, spicy: false, category: "Food" },
+    { id: 26, name: "St. Louis Style Ribs", description: "Trimmed spare ribs with sweet and tangy glaze", priceNGN: 21600, image: "/IMG_3999.jpeg", popular: false, spicy: false, category: "Food" },
+    // Seafood
+    { id: 27, name: "Grilled Salmon Fillet", description: "Atlantic salmon with lemon herb seasoning and grilled vegetables", priceNGN: 25600, image: "/IMG_4001.jpeg", popular: false, spicy: false, category: "Food" },
+    { id: 28, name: "Grilled Shrimp Skewers", description: "Jumbo shrimp marinated in garlic and herbs, grilled to perfection", priceNGN: 22400, image: "/IMG_4042.jpeg", popular: false, spicy: false, category: "Food" },
+    { id: 29, name: "Grilled Sea Bass", description: "Fresh sea bass with Mediterranean herbs and lemon butter", priceNGN: 28800, image: "/IMG_8592.jpeg", popular: false, spicy: false, category: "Food" },
+    { id: 30, name: "Grilled Lobster Tail", description: "Fresh lobster tail with garlic butter and herbs", priceNGN: 35200, image: "/IMG_8771.jpeg", popular: true, spicy: false, category: "Food" },
+    { id: 31, name: "Blackened Mahi Mahi", description: "Spice-crusted mahi mahi with tropical salsa", priceNGN: 26400, image: "/IMG_8772.jpeg", popular: false, spicy: true, category: "Food" },
+    // Chicken
+    { id: 32, name: "Grilled Chicken Breast", description: "Herb-marinated chicken breast with lemon garlic sauce", priceNGN: 18400, image: "/IMG_8773.jpeg", popular: true, spicy: false, category: "Food" },
+    { id: 33, name: "BBQ Chicken Thighs", description: "Juicy chicken thighs with smoky BBQ glaze", priceNGN: 16800, image: "/IMG_8774.jpeg", popular: false, spicy: false, category: "Food" },
+    { id: 34, name: "Spicy Grilled Chicken", description: "Cayenne and paprika rubbed chicken with cooling yogurt sauce", priceNGN: 17600, image: "/IMG_8775.jpeg", popular: false, spicy: true, category: "Food" },
+    { id: 35, name: "Jerk Chicken", description: "Caribbean spiced chicken with pineapple salsa", priceNGN: 19200, image: "/IMG_8776.jpeg", popular: false, spicy: true, category: "Food" },
+    { id: 36, name: "Teriyaki Chicken", description: "Grilled chicken glazed with homemade teriyaki sauce", priceNGN: 18000, image: "/IMG_8779.jpeg", popular: false, spicy: false, category: "Food" },
+    // Pork
+    { id: 37, name: "Grilled Pork Tenderloin", description: "Tender pork loin with apple cider glaze", priceNGN: 21600, image: "/IMG_8780.jpeg", popular: false, spicy: false, category: "Food" },
+    { id: 38, name: "Pulled Pork Sandwich", description: "Slow-smoked pulled pork on brioche bun with coleslaw", priceNGN: 16400, image: "/IMG_8782.jpeg", popular: true, spicy: false, category: "Food" },
+    { id: 39, name: "Pork Chops", description: "Thick-cut pork chops with rosemary and garlic", priceNGN: 19600, image: "/IMG_8783.jpeg", popular: false, spicy: false, category: "Food" },
+    { id: 40, name: "Bacon Wrapped Pork Medallions", description: "Pork tenderloin medallions wrapped in crispy bacon", priceNGN: 23200, image: "/IMG_8785.jpeg", popular: false, spicy: false, category: "Food" },
+    // Appetizers
+    { id: 41, name: "Grilled Halloumi", description: "Grilled halloumi cheese with honey and herbs", priceNGN: 12000, image: "/IMG_8786.jpeg", popular: false, spicy: false, category: "Food" },
+    { id: 42, name: "Bacon Wrapped Scallops", description: "Fresh scallops wrapped in crispy bacon", priceNGN: 18800, image: "/IMG_0229.png", popular: true, spicy: false, category: "Food" },
+    { id: 43, name: "Grilled Artichokes", description: "Baby artichokes grilled with lemon aioli", priceNGN: 11200, image: "/IMG_0231.png", popular: false, spicy: false, category: "Food" },
+    { id: 44, name: "Stuffed Jalapeños", description: "Jalapeños stuffed with cream cheese and bacon", priceNGN: 13600, image: "/IMG_0232.png", popular: false, spicy: true, category: "Food" },
+    { id: 45, name: "Grilled Corn on the Cob", description: "Fresh corn with chili lime butter", priceNGN: 8800, image: "/IMG_0234.png", popular: true, spicy: false, category: "Food" }
   ];
 
-  // ✅ Filtering
+  // Get 13 random items for homepage, or filter normally for menu page
   const displayItems = useMemo(() => {
     let filteredItems = menuItems;
 
@@ -208,14 +95,10 @@ const Menu = () => {
 
     if (activeCategory !== 'All') {
       filteredItems = filteredItems.filter(item => item.category === activeCategory);
-
-      if (activeSubcategory !== 'All') {
-        filteredItems = filteredItems.filter(item => item.subcategory === activeSubcategory);
-      }
     }
 
     return filteredItems;
-  }, [isHomepage, activeCategory, activeSubcategory, searchQuery]);
+  }, [isHomepage, activeCategory, searchQuery]);
 
   const handleAddToCart = (item: any) => {
     addItem(item, 1);
@@ -229,11 +112,12 @@ const Menu = () => {
             Our Signature Menu
           </h2>
           <p className="text-xl text-grill-smoke max-w-2xl mx-auto">
-            Discover our carefully curated selection of premium grilled dishes, 
+            Discover our carefully curated selection of premium grilled dishes,
             crafted with the finest ingredients and traditional techniques
           </p>
         </div>
 
+        {/* Search Input */}
         {!isHomepage && (
           <div className="max-w-md mx-auto mb-8">
             <div className="relative">
@@ -249,17 +133,14 @@ const Menu = () => {
           </div>
         )}
 
-        {/* Main categories */}
+        {/* Categories */}
         {!isHomepage && (
-          <div className="flex flex-wrap justify-center gap-3 mb-6">
+          <div className="flex flex-wrap justify-center gap-3 mb-12">
             {categories.map((category) => (
               <Button
                 key={category}
                 variant={activeCategory === category ? "default" : "outline"}
-                onClick={() => {
-                  setActiveCategory(category);
-                  setActiveSubcategory('All'); // reset subcategory when category changes
-                }}
+                onClick={() => setActiveCategory(category)}
                 className={`rounded-full px-6 py-2 transition-all duration-200 ${
                   activeCategory === category
                     ? 'bg-primary text-white hover:bg-primary/90'
@@ -272,31 +153,11 @@ const Menu = () => {
           </div>
         )}
 
-        {/* Subcategories */}
-        {!isHomepage && activeCategory !== 'All' && subcategoriesMap[activeCategory] && (
-          <div className="flex flex-wrap justify-center gap-2 mb-10">
-            {subcategoriesMap[activeCategory].map((sub) => (
-              <Button
-                key={sub}
-                variant={activeSubcategory === sub ? "default" : "outline"}
-                onClick={() => setActiveSubcategory(sub)}
-                className={`rounded-full px-4 py-1 text-sm ${
-                  activeSubcategory === sub
-                    ? 'bg-primary text-white hover:bg-primary/90'
-                    : 'bg-white text-grill-charcoal border-grill-charcoal hover:bg-primary hover:text-white'
-                }`}
-              >
-                {sub}
-              </Button>
-            ))}
-          </div>
-        )}
-
-        {/* Menu grid */}
+        {/* Menu Items */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {displayItems.map((item, index) => (
-            <Card 
-              key={item.id} 
+            <Card
+              key={item.id}
               className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 animate-scale-in border-0 bg-white"
               style={{ animationDelay: `${index * 0.1}s` }}
             >
@@ -322,11 +183,12 @@ const Menu = () => {
                 </div>
                 <div className="absolute top-4 right-4">
                   <Badge variant="secondary" className="bg-black/70 text-white">
-                    {item.subcategory}
+                    {item.category}
                   </Badge>
                 </div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               </div>
-              
+
               <CardContent className="p-6">
                 <div className="flex justify-between items-start mb-3">
                   <h3 className="text-xl font-bold text-grill-charcoal font-playfair">
@@ -352,12 +214,11 @@ const Menu = () => {
           ))}
         </div>
 
-        {/* Empty state */}
         {displayItems.length === 0 && (
           <div className="text-center py-12">
             <p className="text-xl text-grill-smoke">
-              {searchQuery.trim() 
-                ? `No items found for "${searchQuery}"` 
+              {searchQuery.trim()
+                ? `No items found for "${searchQuery}"`
                 : `No items found in the ${activeCategory} category.`}
             </p>
             {searchQuery.trim() && (
@@ -372,11 +233,12 @@ const Menu = () => {
           </div>
         )}
 
+        {/* View All Button */}
         {isHomepage && (
           <div className="text-center mt-8">
             <Link to="/menu">
-              <Button 
-                size="lg" 
+              <Button
+                size="lg"
                 className="bg-primary hover:bg-primary/90 text-white px-8 py-3 text-lg font-semibold"
               >
                 View All Menu
