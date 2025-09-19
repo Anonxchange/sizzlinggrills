@@ -102,7 +102,7 @@ const Header = () => {
             <div className="pt-3 border-t border-border">
               <div className="flex items-center text-sm text-grill-smoke mb-3">
                 <Phone className="w-4 h-4 mr-2" />
-                (555) 123-GRILL
+                +2347045892901
               </div>
               <div className="space-y-2">
                 <Link to="/checkout" className="block">
