@@ -5,11 +5,14 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useCart } from '@/contexts/CartContext';
 import { formatCurrency } from '@/lib/utils';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
+import { useLocation, Link } from 'react-router-dom';
 
 const Menu = () => {
   const { addItem } = useCart();
   const [activeCategory, setActiveCategory] = useState('All');
+  const location = useLocation();
+  const isHomepage = location.pathname === '/';
 
   const categories = ['All', 'Steaks', 'Wings', 'Vegetables', 'Burgers', 'Ribs', 'Seafood'];
 
@@ -202,9 +205,19 @@ const Menu = () => {
     }
   ];
 
-  const filteredItems = activeCategory === 'All' 
-    ? menuItems 
-    : menuItems.filter(item => item.category === activeCategory);
+  // Get 8 random items for homepage, or filter normally for menu page
+  const displayItems = useMemo(() => {
+    if (isHomepage && activeCategory === 'All') {
+      // Shuffle and take first 8 items for homepage
+      const shuffled = [...menuItems].sort(() => Math.random() - 0.5);
+      return shuffled.slice(0, 8);
+    }
+    
+    // Normal filtering for menu page or when category is selected
+    return activeCategory === 'All' 
+      ? menuItems 
+      : menuItems.filter(item => item.category === activeCategory);
+  }, [isHomepage, activeCategory]);
 
   const handleAddToCart = (item: any) => {
     addItem(item, 1);
@@ -223,26 +236,28 @@ const Menu = () => {
           </p>
         </div>
 
-        {/* Category Filter Buttons */}
-        <div className="flex flex-wrap justify-center gap-3 mb-12">
-          {categories.map((category) => (
-            <Button
-              key={category}
-              variant={activeCategory === category ? "default" : "outline"}
-              onClick={() => setActiveCategory(category)}
-              className={`rounded-full px-6 py-2 transition-all duration-200 ${
-                activeCategory === category
-                  ? 'bg-primary text-white hover:bg-primary/90'
-                  : 'bg-white text-grill-charcoal border-grill-charcoal hover:bg-primary hover:text-white'
-              }`}
-            >
-              {category}
-            </Button>
-          ))}
-        </div>
+        {/* Category Filter Buttons - Hidden on homepage */}
+        {!isHomepage && (
+          <div className="flex flex-wrap justify-center gap-3 mb-12">
+            {categories.map((category) => (
+              <Button
+                key={category}
+                variant={activeCategory === category ? "default" : "outline"}
+                onClick={() => setActiveCategory(category)}
+                className={`rounded-full px-6 py-2 transition-all duration-200 ${
+                  activeCategory === category
+                    ? 'bg-primary text-white hover:bg-primary/90'
+                    : 'bg-white text-grill-charcoal border-grill-charcoal hover:bg-primary hover:text-white'
+                }`}
+              >
+                {category}
+              </Button>
+            ))}
+          </div>
+        )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredItems.map((item, index) => (
+          {displayItems.map((item, index) => (
             <Card 
               key={item.id} 
               className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 animate-scale-in border-0 bg-white"
@@ -301,11 +316,25 @@ const Menu = () => {
           ))}
         </div>
 
-        {filteredItems.length === 0 && (
+        {displayItems.length === 0 && (
           <div className="text-center py-12">
             <p className="text-xl text-grill-smoke">
               No items found in the {activeCategory} category.
             </p>
+          </div>
+        )}
+
+        {/* View All Menu Button - Only show on homepage */}
+        {isHomepage && (
+          <div className="text-center mt-8">
+            <Link to="/menu">
+              <Button 
+                size="lg" 
+                className="bg-primary hover:bg-primary/90 text-white px-8 py-3 text-lg font-semibold"
+              >
+                View All Menu
+              </Button>
+            </Link>
           </div>
         )}
       </div>
