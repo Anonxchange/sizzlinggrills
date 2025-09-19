@@ -26,7 +26,7 @@ const Menu = () => {
     Drinks: ['All', 'Chapman', 'Soft Drinks', 'Alcohol Drinks', 'Wine']
   };
 
-  // ✅ Menu items regrouped
+  // ✅ Menu items (clean + regrouped)
   const menuItems = [
     // Food → Grilling
     {
@@ -42,10 +42,21 @@ const Menu = () => {
     },
     {
       id: 2,
-      name: "Premium Grilled Steak",
-      description: "Tender ribeye steak grilled to perfection with our signature sauce",
-      priceNGN: 45000,
-      image: "/IMG_3505.jpeg",
+      name: "Smoked BBQ Ribs",
+      description: "Slow smoked pork ribs with tangy barbecue glaze",
+      priceNGN: 38000,
+      image: "/IMG_3510.jpeg",
+      popular: false,
+      spicy: false,
+      category: "Food",
+      subcategory: "Grilling"
+    },
+    {
+      id: 3,
+      name: "Grilled Chicken Wings",
+      description: "Charcoal grilled chicken wings with house spices",
+      priceNGN: 15000,
+      image: "/IMG_3515.jpeg",
       popular: true,
       spicy: false,
       category: "Food",
@@ -54,7 +65,7 @@ const Menu = () => {
 
     // Food → Shawarma
     {
-      id: 3,
+      id: 10,
       name: "Shawarma Deluxe",
       description: "Loaded chicken & beef shawarma with cheese and extra sauce",
       priceNGN: 9000,
@@ -67,7 +78,7 @@ const Menu = () => {
 
     // Food → Soups
     {
-      id: 4,
+      id: 20,
       name: "Goat Meat Pepper Soup",
       description: "Spicy Nigerian goat meat pepper soup",
       priceNGN: 7000,
@@ -80,7 +91,7 @@ const Menu = () => {
 
     // Food → Full Package
     {
-      id: 5,
+      id: 30,
       name: "Jollof Rice Full Package",
       description: "Rice, chicken, plantain and salad",
       priceNGN: 12000,
@@ -93,7 +104,7 @@ const Menu = () => {
 
     // Snacks & Desserts → Parfait
     {
-      id: 50,
+      id: 40,
       name: "Parfait",
       description: "Creamy yoghurt parfait with granola and fresh fruits",
       priceNGN: 6000,
@@ -105,7 +116,7 @@ const Menu = () => {
     },
     // Snacks & Desserts → Pastries
     {
-      id: 51,
+      id: 41,
       name: "Meat Pie",
       description: "Classic Nigerian meat pie with beef filling",
       priceNGN: 2500,
@@ -117,7 +128,7 @@ const Menu = () => {
     },
     // Snacks & Desserts → Cakes
     {
-      id: 52,
+      id: 42,
       name: "Chocolate Cake Slice",
       description: "Rich chocolate cake slice with cream topping",
       priceNGN: 3500,
@@ -130,7 +141,7 @@ const Menu = () => {
 
     // Drinks → Chapman
     {
-      id: 60,
+      id: 50,
       name: "Chapman",
       description: "Refreshing Nigerian Chapman cocktail",
       priceNGN: 3500,
@@ -142,7 +153,7 @@ const Menu = () => {
     },
     // Drinks → Soft Drinks
     {
-      id: 61,
+      id: 51,
       name: "Soft Drink (Coke)",
       description: "Chilled Coca-Cola bottle",
       priceNGN: 1000,
@@ -154,7 +165,7 @@ const Menu = () => {
     },
     // Drinks → Wine
     {
-      id: 62,
+      id: 52,
       name: "Red Wine",
       description: "Premium red wine bottle",
       priceNGN: 15000,
@@ -166,7 +177,7 @@ const Menu = () => {
     },
     // Drinks → Alcohol Drinks
     {
-      id: 63,
+      id: 53,
       name: "Beer",
       description: "Cold bottle of premium lager beer",
       priceNGN: 2000,
