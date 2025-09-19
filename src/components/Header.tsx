@@ -15,8 +15,8 @@ const Header = () => {
     { name: 'Home', href: '/' },
     { name: 'Menu', href: '/menu' },
     { name: 'About', href: '/about' },
-    { name: 'Catering', href: '/catering' },
-    { name: 'Private Events', href: '/private-events' },
+    { name: 'Catering', href: '/services/catering' },
+    { name: 'Private Events', href: '/services/events' },
     { name: 'Contact', href: '/contact' },
   ];
 
@@ -52,7 +52,7 @@ const Header = () => {
           <div className="hidden lg:flex items-center space-x-4">
             <div className="flex items-center text-sm text-grill-smoke">
               <Phone className="w-4 h-4 mr-1" />
-            +2347045892901
+              (555) 123-GRILL
             </div>
             {getTotalItems() > 0 && <CartDrawer />}
             <ProfileDropdown />
@@ -102,7 +102,7 @@ const Header = () => {
             <div className="pt-3 border-t border-border">
               <div className="flex items-center text-sm text-grill-smoke mb-3">
                 <Phone className="w-4 h-4 mr-2" />
-                +2347045892901
+                (555) 123-GRILL
               </div>
               <div className="space-y-2">
                 <Link to="/checkout" className="block">
