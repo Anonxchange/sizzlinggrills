@@ -16,7 +16,7 @@ const ContactPage = () => {
     {
       icon: Phone,
       title: 'Phone',
-      details: ['+2348145892901', '+2347045892901 (WhatsApp)']
+      details: ['+2347045892901', '+2347045892901 (WhatsApp)']
     },
     {
       icon: Mail,
