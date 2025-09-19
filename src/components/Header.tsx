@@ -52,7 +52,7 @@ const Header = () => {
           <div className="hidden lg:flex items-center space-x-4">
             <div className="flex items-center text-sm text-grill-smoke">
               <Phone className="w-4 h-4 mr-1" />
-              (555) 123-GRILL
+            +2347045892901
             </div>
             {getTotalItems() > 0 && <CartDrawer />}
             <ProfileDropdown />
