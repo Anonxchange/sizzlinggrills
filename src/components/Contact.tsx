@@ -8,7 +8,7 @@ const Contact = () => {
     {
       icon: Phone,
       title: "Call Us",
-      details: "(555) 123-GRILL",
+      details: "+2347045892901",
       subtitle: "Order by phone"
     },
     {
