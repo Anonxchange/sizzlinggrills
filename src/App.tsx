@@ -11,6 +11,14 @@ import ContactPage from "./pages/ContactPage";
 import GiftCardPage from "./pages/GiftCardPage";
 import ReservationPage from "./pages/ReservationPage";
 import Checkout from "./pages/Checkout";
+import DineInPage from "./pages/DineInPage";
+import TakeoutPage from "./pages/TakeoutPage";
+import CateringPage from "./pages/CateringPage";
+import PrivateEventsPage from "./pages/PrivateEventsPage";
+import HowToOrderPage from './pages/HowToOrderPage';
+import ParkingPage from './pages/ParkingPage';
+import CareersPage from './pages/CareersPage';
+import HoursPage from './pages/HoursPage';
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -31,6 +39,14 @@ const App = () => (
             <Route path="/info/gift-cards" element={<GiftCardPage />} />
             <Route path="/reservations" element={<ReservationPage />} />
             <Route path="/checkout" element={<Checkout />} />
+            <Route path="/services/dine-in" element={<DineInPage />} />
+            <Route path="/services/takeout" element={<TakeoutPage />} />
+            <Route path="/services/catering" element={<CateringPage />} />
+            <Route path="/services/events" element={<PrivateEventsPage />} />
+            <Route path="/info/how-to-order" element={<HowToOrderPage />} />
+            <Route path="/info/parking" element={<ParkingPage />} />
+            <Route path="/info/careers" element={<CareersPage />} />
+            <Route path="/info/hours" element={<HoursPage />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
