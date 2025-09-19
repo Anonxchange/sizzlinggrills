@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ArrowLeft, CreditCard, MapPin, Phone, User, CheckCircle } from 'lucide-react';
+import { ArrowLeft, CreditCard, MapPin, Phone, User, CheckCircle, Minus, Plus, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -11,7 +11,7 @@ import { formatCurrency } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 
 const Checkout = () => {
-  const { state, clearCart, getFormattedTotal, getTotalItems } = useCart();
+  const { state, clearCart, getFormattedTotal, getTotalItems, updateQty, removeItem } = useCart();
   const { toast } = useToast();
   
   const [customerDetails, setCustomerDetails] = useState({
@@ -136,40 +136,92 @@ const Checkout = () => {
             </h1>
           </div>
 
-          <div className="grid lg:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
             {/* Order Summary */}
             <Card className="h-fit">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <CreditCard className="w-5 h-5" />
-                  Order Summary ({getTotalItems()} items)
+                <CardTitle className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <CreditCard className="w-5 h-5" />
+                    Order Summary ({getTotalItems()} items)
+                  </div>
+                  {state.items.length > 0 && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={clearCart}
+                      className="text-red-600 hover:text-red-700 hover:bg-red-50 text-xs sm:text-sm"
+                    >
+                      <Trash2 className="w-4 h-4 mr-1" />
+                      <span className="hidden sm:inline">Clear All</span>
+                      <span className="sm:hidden">Clear</span>
+                    </Button>
+                  )}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 {state.items.map((cartItem) => (
-                  <div key={cartItem.itemId} className="flex items-center gap-4 py-3 border-b last:border-b-0">
-                    <img
-                      src={cartItem.item.image}
-                      alt={cartItem.item.name}
-                      className="w-16 h-16 object-cover rounded-lg"
-                    />
-                    <div className="flex-1">
-                      <h4 className="font-medium">{cartItem.item.name}</h4>
-                      <p className="text-sm text-gray-600">
-                        {formatCurrency(cartItem.item.priceNGN)} x {cartItem.qty}
-                      </p>
+                  <div key={cartItem.itemId} className="flex flex-col sm:flex-row sm:items-center gap-4 py-3 border-b last:border-b-0">
+                    <div className="flex items-center gap-3 flex-1">
+                      <img
+                        src={cartItem.item.image}
+                        alt={cartItem.item.name}
+                        className="w-12 h-12 sm:w-16 sm:h-16 object-cover rounded-lg"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-medium truncate text-sm sm:text-base">{cartItem.item.name}</h4>
+                        <p className="text-xs sm:text-sm text-gray-600">
+                          {formatCurrency(cartItem.item.priceNGN)} each
+                        </p>
+                      </div>
                     </div>
-                    <div className="text-right">
-                      <p className="font-bold text-primary">
-                        {formatCurrency(cartItem.item.priceNGN * cartItem.qty)}
-                      </p>
+
+                    <div className="flex items-center justify-between sm:justify-end gap-4">
+                      {/* Quantity Controls */}
+                      <div className="flex items-center gap-2">
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="h-7 w-7 sm:h-8 sm:w-8"
+                          onClick={() => updateQty(cartItem.itemId, cartItem.qty - 1)}
+                        >
+                          <Minus className="w-3 h-3" />
+                        </Button>
+                        
+                        <span className="w-6 sm:w-8 text-center font-medium text-sm">
+                          {cartItem.qty}
+                        </span>
+                        
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="h-7 w-7 sm:h-8 sm:w-8"
+                          onClick={() => updateQty(cartItem.itemId, cartItem.qty + 1)}
+                        >
+                          <Plus className="w-3 h-3" />
+                        </Button>
+                      </div>
+
+                      <div className="text-right">
+                        <p className="font-bold text-primary text-sm sm:text-base">
+                          {formatCurrency(cartItem.item.priceNGN * cartItem.qty)}
+                        </p>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => removeItem(cartItem.itemId)}
+                          className="text-red-600 hover:text-red-700 hover:bg-red-50 p-1 h-auto mt-1"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 ))}
                 <div className="pt-4 border-t">
-                  <div className="flex justify-between items-center text-lg font-bold">
+                  <div className="flex justify-between items-center text-base sm:text-lg font-bold">
                     <span>Total:</span>
-                    <span className="text-2xl text-primary">{getFormattedTotal()}</span>
+                    <span className="text-xl sm:text-2xl text-primary">{getFormattedTotal()}</span>
                   </div>
                 </div>
               </CardContent>
@@ -255,7 +307,7 @@ const Checkout = () => {
 
                   <Button
                     type="submit"
-                    className="w-full bg-primary hover:bg-primary/90 text-white py-6 text-lg"
+                    className="w-full bg-primary hover:bg-primary/90 text-white py-4 sm:py-6 text-base sm:text-lg"
                     disabled={isSubmitting}
                     data-testid="button-submit-order"
                   >
