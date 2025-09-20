@@ -13,6 +13,7 @@ import { useSupabase } from '@/hooks/useSupabase';
 import { useToast } from '@/hooks/use-toast';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import DynamicGiftCardPreview from '@/components/DynamicGiftCardPreview';
 
 // Form validation schema
 const giftCardSchema = z.object({
@@ -219,8 +220,15 @@ const GiftCardPage = () => {
           </div>
         </section>
 
+        {/* Dynamic Gift Card Preview */}
+        <section className="py-4">
+          <div className="container mx-auto px-4">
+            <DynamicGiftCardPreview />
+          </div>
+        </section>
+
         {/* Gift Card Purchase */}
-        <section className="py-16">
+        <section className="py-8">
           <div className="container mx-auto px-4">
             <div className="max-w-6xl mx-auto">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
@@ -266,30 +274,39 @@ const GiftCardPage = () => {
 
                   {/* Design Selection */}
                   <div>
-                    <h3 className="text-xl font-semibold mb-4 text-grill-charcoal">
-                      Choose Design
+                    <h3 className="text-xl font-semibold mb-6 text-grill-charcoal">
+                      Choose Design Theme
                     </h3>
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       {giftCardDesigns.map((design) => (
                         <Card
                           key={design.id}
-                          className={`cursor-pointer transition-all duration-200 ${
+                          className={`cursor-pointer transition-all duration-300 transform hover:scale-105 ${
                             selectedDesign.id === design.id 
-                              ? 'ring-2 ring-primary shadow-lg' 
-                              : 'hover:shadow-md'
+                              ? 'ring-2 ring-primary shadow-xl border-primary' 
+                              : 'hover:shadow-lg border-gray-200'
                           }`}
                           onClick={() => setSelectedDesign(design)}
                         >
                           <CardContent className="p-4 text-center">
-                            <div className={`w-full h-24 rounded-lg ${design.color} flex items-center justify-center text-4xl mb-3`}>
+                            <div className={`w-full h-20 rounded-xl ${design.color} flex items-center justify-center text-3xl mb-3 shadow-md`}>
                               {design.icon}
                             </div>
-                            <h4 className="font-semibold text-grill-charcoal mb-1">
+                            <h4 className="font-bold text-grill-charcoal mb-2 text-lg">
                               {design.name}
                             </h4>
-                            <p className="text-sm text-grill-smoke">
+                            <p className="text-sm text-grill-smoke leading-relaxed">
                               {design.description}
                             </p>
+                            {selectedDesign.id === design.id && (
+                              <div className="mt-3 flex justify-center">
+                                <div className="w-6 h-6 bg-primary rounded-full flex items-center justify-center">
+                                  <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                  </svg>
+                                </div>
+                              </div>
+                            )}
                           </CardContent>
                         </Card>
                       ))}
