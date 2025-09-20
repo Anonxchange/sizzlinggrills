@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { ArrowLeft, CreditCard, MapPin, Phone, User, CheckCircle, Minus, Plus, Trash2 } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { ArrowLeft, CreditCard, MapPin, Phone, User, CheckCircle, Minus, Plus, Trash2, Wallet } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -9,11 +9,23 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useCart } from '@/contexts/CartContext';
 import { formatCurrency } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
+import { useSupabase } from '@/hooks/useSupabase';
+import { supabase } from '@/integrations/supabase/client';
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
+
+interface WalletData {
+  balance: number;
+  user_id: string;
+}
 
 const Checkout = () => {
   const { state, clearCart, getFormattedTotal, getTotalItems, updateQty, removeItem } = useCart();
   const { toast } = useToast();
+  const { insertData, fetchData } = useSupabase();
   
+  const [user, setUser] = useState<any>(null);
+  const [wallet, setWallet] = useState<WalletData | null>(null);
   const [customerDetails, setCustomerDetails] = useState({
     fullName: '',
     phone: '',
@@ -25,8 +37,52 @@ const Checkout = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [orderComplete, setOrderComplete] = useState(false);
 
+  // Check authentication and load wallet
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        setUser(session.user);
+        setCustomerDetails(prev => ({
+          ...prev,
+          email: session.user.email || '',
+          fullName: session.user.user_metadata?.full_name || ''
+        }));
+
+        // Load wallet data
+        const { data: walletData, error } = await supabase
+          .from('wallets')
+          .select('*')
+          .eq('user_id', session.user.id)
+          .single();
+
+        if (!error && walletData) {
+          setWallet(walletData);
+        }
+      }
+    };
+
+    checkAuth();
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session?.user) {
+        setUser(session.user);
+      } else {
+        setUser(null);
+        setWallet(null);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
   const handleInputChange = (field: string, value: string) => {
     setCustomerDetails(prev => ({ ...prev, [field]: value }));
+  };
+
+  const getTotalPrice = () => {
+    return state.items.reduce((total, item) => total + (item.item.priceNGN * item.qty), 0);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -41,87 +97,190 @@ const Checkout = () => {
       return;
     }
 
+    // Check wallet balance if paying with wallet
+    if (customerDetails.paymentMethod === 'wallet') {
+      if (!user) {
+        toast({
+          title: "Authentication Required",
+          description: "Please sign in to pay with your wallet.",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      if (!wallet || wallet.balance < getTotalPrice()) {
+        toast({
+          title: "Insufficient Balance",
+          description: "Please top up your wallet or choose a different payment method.",
+          variant: "destructive"
+        });
+        return;
+      }
+    }
+
     setIsSubmitting(true);
     
-    // Simulate order processing
-    setTimeout(() => {
-      setIsSubmitting(false);
+    try {
+      const totalAmount = getTotalPrice();
+      
+      // Create order record
+      const orderData = {
+        user_id: user?.id || null,
+        items: JSON.stringify(state.items),
+        total_amount: totalAmount,
+        customer_info: JSON.stringify(customerDetails),
+        payment_method: customerDetails.paymentMethod,
+        payment_status: customerDetails.paymentMethod === 'wallet' ? 'completed' : 'pending',
+        order_type: 'delivery',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
+
+      const orderResult = await insertData('orders', orderData);
+      
+      if (!orderResult) {
+        throw new Error('Failed to create order');
+      }
+
+      // Process wallet payment if selected
+      if (customerDetails.paymentMethod === 'wallet' && user && wallet) {
+        // Create debit transaction
+        const transactionData = {
+          user_id: user.id,
+          wallet_id: wallet.user_id,
+          type: 'debit',
+          amount: totalAmount,
+          description: `Order payment - Order #${orderResult[0]?.id}`,
+          source: 'order',
+          reference_id: orderResult[0]?.id,
+          created_at: new Date().toISOString()
+        };
+
+        await insertData('wallet_transactions', transactionData);
+
+        // Update wallet balance
+        const newBalance = wallet.balance - totalAmount;
+        const { error } = await supabase
+          .from('wallets')
+          .update({ balance: newBalance, updated_at: new Date().toISOString() })
+          .eq('user_id', user.id);
+
+        if (error) {
+          throw new Error('Failed to update wallet balance');
+        }
+
+        setWallet({ ...wallet, balance: newBalance });
+      }
+      
       setOrderComplete(true);
       clearCart();
       
       toast({
         title: "Order Confirmed! 🎉",
-        description: "Your delicious meal will be prepared shortly.",
+        description: customerDetails.paymentMethod === 'wallet' 
+          ? "Payment processed successfully. Your meal will be prepared shortly."
+          : "Your delicious meal will be prepared shortly.",
         duration: 5000
       });
-    }, 2000);
+      
+    } catch (error) {
+      console.error('Order processing error:', error);
+      toast({
+        title: "Order Failed",
+        description: "There was an issue processing your order. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (state.items.length === 0 && !orderComplete) {
     return (
-      <div className="min-h-screen bg-warm-cream pt-20 pb-12">
-        <div className="container mx-auto px-4">
-          <div className="max-w-2xl mx-auto text-center py-12">
-            <div className="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-6">
-              <CreditCard className="w-12 h-12 text-gray-400" />
+      <>
+        <Header />
+        <div className="min-h-screen bg-warm-cream pt-20 pb-12">
+          <div className="container mx-auto px-4">
+            <div className="max-w-2xl mx-auto text-center py-12">
+              <div className="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-6">
+                <CreditCard className="w-12 h-12 text-gray-400" />
+              </div>
+              <h1 className="text-3xl font-bold text-grill-charcoal mb-4 font-playfair">
+                Your cart is empty
+              </h1>
+              <p className="text-grill-smoke mb-8">
+                Add some delicious items to your cart before proceeding to checkout.
+              </p>
+              <Button 
+                onClick={() => window.location.href = '/'}
+                className="bg-primary hover:bg-primary/90"
+              >
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Back to Menu
+              </Button>
             </div>
-            <h1 className="text-3xl font-bold text-grill-charcoal mb-4 font-playfair">
-              Your cart is empty
-            </h1>
-            <p className="text-grill-smoke mb-8">
-              Add some delicious items to your cart before proceeding to checkout.
-            </p>
-            <Button 
-              onClick={() => window.location.href = '/'}
-              className="bg-primary hover:bg-primary/90"
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Menu
-            </Button>
           </div>
         </div>
-      </div>
+        <Footer />
+      </>
     );
   }
 
   if (orderComplete) {
     return (
-      <div className="min-h-screen bg-warm-cream pt-20 pb-12">
-        <div className="container mx-auto px-4">
-          <div className="max-w-2xl mx-auto text-center py-12">
-            <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-              <CheckCircle className="w-12 h-12 text-green-600" />
-            </div>
-            <h1 className="text-3xl font-bold text-grill-charcoal mb-4 font-playfair">
-              Order Confirmed!
-            </h1>
-            <p className="text-grill-smoke mb-8">
-              Thank you for your order! Our kitchen team will start preparing your delicious meal shortly. 
-              You'll receive a confirmation call within 15 minutes.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button 
-                onClick={() => window.location.href = '/'}
-                className="bg-primary hover:bg-primary/90"
-              >
-                Order More
-              </Button>
-              <Button 
-                variant="outline"
-                onClick={() => window.location.href = '/#contact'}
-              >
-                Contact Us
-              </Button>
+      <>
+        <Header />
+        <div className="min-h-screen bg-warm-cream pt-20 pb-12">
+          <div className="container mx-auto px-4">
+            <div className="max-w-2xl mx-auto text-center py-12">
+              <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <CheckCircle className="w-12 h-12 text-green-600" />
+              </div>
+              <h1 className="text-3xl font-bold text-grill-charcoal mb-4 font-playfair">
+                Order Confirmed!
+              </h1>
+              <p className="text-grill-smoke mb-8">
+                Thank you for your order! Our kitchen team will start preparing your delicious meal shortly. 
+                {customerDetails.paymentMethod === 'wallet' 
+                  ? ' Payment has been processed successfully.' 
+                  : ' You\'ll receive a confirmation call within 15 minutes.'
+                }
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Button 
+                  onClick={() => window.location.href = '/'}
+                  className="bg-primary hover:bg-primary/90"
+                >
+                  Order More
+                </Button>
+                {user && (
+                  <Button 
+                    variant="outline"
+                    onClick={() => window.location.href = '/profile'}
+                  >
+                    View Orders
+                  </Button>
+                )}
+                <Button 
+                  variant="outline"
+                  onClick={() => window.location.href = '/#contact'}
+                >
+                  Contact Us
+                </Button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+        <Footer />
+      </>
     );
   }
 
   return (
-    <div className="min-h-screen bg-warm-cream pt-20 pb-12">
-      <div className="container mx-auto px-4">
+    <>
+      <Header />
+      <div className="min-h-screen bg-warm-cream pt-20 pb-12">
+        <div className="container mx-auto px-4">
         <div className="max-w-6xl mx-auto">
           <div className="flex items-center gap-4 mb-8">
             <Button 
@@ -294,6 +453,23 @@ const Checkout = () => {
                       onValueChange={(value) => handleInputChange('paymentMethod', value)}
                       data-testid="input-payment-method"
                     >
+                      {user && wallet && (
+                        <div className="flex items-center justify-between p-3 border rounded-lg">
+                          <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="wallet" id="wallet" />
+                            <Label htmlFor="wallet" className="flex items-center gap-2">
+                              <Wallet className="w-4 h-4" />
+                              Pay with Wallet
+                            </Label>
+                          </div>
+                          <div className="text-sm">
+                            <span className="text-gray-600">Balance: </span>
+                            <span className={`font-medium ${wallet.balance >= getTotalPrice() ? 'text-green-600' : 'text-red-600'}`}>
+                              {formatCurrency(wallet.balance)}
+                            </span>
+                          </div>
+                        </div>
+                      )}
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="cash" id="cash" />
                         <Label htmlFor="cash">Cash on Delivery</Label>
@@ -303,6 +479,22 @@ const Checkout = () => {
                         <Label htmlFor="transfer">Bank Transfer</Label>
                       </div>
                     </RadioGroup>
+                    
+                    {customerDetails.paymentMethod === 'wallet' && wallet && wallet.balance < getTotalPrice() && (
+                      <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+                        <p className="text-red-600 text-sm">
+                          Insufficient wallet balance. Please top up your wallet or choose a different payment method.
+                        </p>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="mt-2"
+                          onClick={() => window.location.href = '/profile?tab=wallet'}
+                        >
+                          Top Up Wallet
+                        </Button>
+                      </div>
+                    )}
                   </div>
 
                   <Button
@@ -327,8 +519,10 @@ const Checkout = () => {
             </Card>
           </div>
         </div>
+        </div>
       </div>
-    </div>
+      <Footer />
+    </>
   );
 };
 
