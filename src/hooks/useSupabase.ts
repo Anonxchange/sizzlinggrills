@@ -50,16 +50,33 @@ export const useSupabase = () => {
     try {
       setLoading(true)
       setError(null)
+      console.log('Attempting sign up for email:', email)
+      
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
       })
       
-      if (error) throw error
-      return data
+      console.log('Sign up response:', { data, error })
+      
+      if (error) {
+        console.error('Sign up error:', error)
+        
+        // Provide more specific error messages
+        let userMessage = error.message
+        if (error.code === 'unexpected_failure') {
+          userMessage = 'Email confirmation is required but not properly configured. Please contact support or try again later.'
+        }
+        
+        setError(userMessage)
+        return { data: null, error: userMessage }
+      }
+      return { data, error: null }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred')
-      return null
+      console.error('Sign up catch block:', err)
+      const errorMessage = err instanceof Error ? err.message : 'An error occurred'
+      setError(errorMessage)
+      return { data: null, error: errorMessage }
     } finally {
       setLoading(false)
     }
@@ -69,16 +86,26 @@ export const useSupabase = () => {
     try {
       setLoading(true)
       setError(null)
+      console.log('Attempting sign in for email:', email)
+      
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       })
       
-      if (error) throw error
-      return data
+      console.log('Sign in response:', { data, error })
+      
+      if (error) {
+        console.error('Sign in error:', error)
+        setError(error.message)
+        return { data: null, error: error.message }
+      }
+      return { data, error: null }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred')
-      return null
+      console.error('Sign in catch block:', err)
+      const errorMessage = err instanceof Error ? err.message : 'An error occurred'
+      setError(errorMessage)
+      return { data: null, error: errorMessage }
     } finally {
       setLoading(false)
     }
