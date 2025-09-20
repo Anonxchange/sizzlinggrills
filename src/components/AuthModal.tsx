@@ -27,7 +27,7 @@ const AuthModal = ({ isOpen, onClose, mode, onModeChange }: AuthModalProps) => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   
-  const { signIn, signUp, loading } = useSupabase();
+  const { signIn, signUp, loading, error } = useSupabase();
   const { toast } = useToast();
 
   const resetForm = () => {
@@ -46,37 +46,56 @@ const AuthModal = ({ isOpen, onClose, mode, onModeChange }: AuthModalProps) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (mode === 'signup' && password !== confirmPassword) {
-      toast({
-        title: "Passwords don't match",
-        description: "Please ensure both passwords are the same.",
-        variant: "destructive",
-      });
-      return;
+    if (mode === 'signup') {
+      if (password !== confirmPassword) {
+        toast({
+          title: "Passwords don't match",
+          description: "Please ensure both passwords are the same.",
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      if (password.length < 6) {
+        toast({
+          title: "Password too short",
+          description: "Password must be at least 6 characters long.",
+          variant: "destructive",
+        });
+        return;
+      }
     }
 
-    try {
-      if (mode === 'signin') {
-        const result = await signIn(email, password);
-        if (result) {
-          toast({
-            title: "Welcome back!",
-            description: "You have successfully signed in.",
-          });
-          handleClose();
-        }
-      } else {
-        const result = await signUp(email, password);
-        if (result) {
-          toast({
-            title: "Account created!",
-            description: "Please check your email to verify your account.",
-          });
-          handleClose();
-        }
+    if (mode === 'signin') {
+      const result = await signIn(email, password);
+      if (result.data) {
+        toast({
+          title: "Welcome back!",
+          description: "You have successfully signed in.",
+        });
+        handleClose();
+      } else if (result.error) {
+        toast({
+          title: "Sign In Failed",
+          description: result.error,
+          variant: "destructive",
+        });
       }
-    } catch (error) {
-      // Error handling is done in useSupabase hook
+    } else {
+      const result = await signUp(email, password);
+      if (result.data) {
+        toast({
+          title: "Account created!",
+          description: "Please check your email to verify your account.",
+        });
+        handleClose();
+      } else if (result.error) {
+        toast({
+          title: "Sign Up Failed",
+          description: result.error,
+          variant: "destructive",
+        });
+      }
     }
   };
 
