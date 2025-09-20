@@ -31,15 +31,15 @@ const AboutPage = () => {
 
   const team = [
     {
-      name: 'Chef Adebayo Johnson',
+      name: 'Chef Oluwole Purity',
       role: 'Executive Chef',
-      description: 'With over 15 years of culinary experience, Chef Adebayo brings innovation to traditional grilling techniques.',
+      description: 'With over 15 years of culinary experience, Chef Purity brings innovation to traditional grilling techniques.',
       image: 'https://images.unsplash.com/photo-1583394293214-28ded15ee548?auto=format&fit=crop&w=400&q=80'
     },
     {
-      name: 'Sarah Okonkwo',
+      name: 'Oluwole Olamide',
       role: 'Restaurant Manager',
-      description: 'Sarah ensures every guest receives exceptional service and has a memorable dining experience.',
+      description: 'Olamide ensures every guest receives exceptional service and has a memorable dining experience.',
       image: 'https://images.unsplash.com/photo-1494790108755-2616c27b7509?auto=format&fit=crop&w=400&q=80'
     },
     {
