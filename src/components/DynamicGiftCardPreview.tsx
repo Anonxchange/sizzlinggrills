@@ -1,6 +1,19 @@
 import { useState, useEffect } from "react";
 import { formatCurrency } from "@/lib/utils";
 
+const ChefHatIcon = ({ size = 20, className = "" }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="currentColor"
+    className={className}
+  >
+    <path d="M12 2C8.69 2 6 4.69 6 8c0 .34.03.67.08 1H6a3 3 0 0 0 0 6v2a2 2 0 0 0 2 2v3h8v-3a2 2 0 0 0 2-2v-2a3 3 0 0 0 0-6h-.08c.05-.33.08-.66.08-1 0-3.31-2.69-6-6-6z" />
+  </svg>
+);
+
 const DynamicGiftCardPreview = () => {
   const amounts = [5000, 10000, 15000, 20000, 25000, 50000, 75000, 100000];
   const [currentAmountIndex, setCurrentAmountIndex] = useState(0);
@@ -31,7 +44,7 @@ const DynamicGiftCardPreview = () => {
               <h2 className="text-3xl">Sizzling</h2>
               <h2 className="text-3xl -mt-1 flex items-center gap-1">
                 Grills
-                <span className="text-xl">👨‍🍳</span>
+                <ChefHatIcon size={20} className="text-[#2c1a10]" />
               </h2>
             </div>
             <div
