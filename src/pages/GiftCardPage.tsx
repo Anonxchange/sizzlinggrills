@@ -9,7 +9,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { formatCurrency } from '@/lib/utils';
-import { useSupabase } from '@/hooks/useSupabase';
+import { useGiftCard } from '@/hooks/useGiftCard';
 import { useToast } from '@/hooks/use-toast';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -32,7 +32,7 @@ const GiftCardPage = () => {
   const [customAmount, setCustomAmount] = useState<string>('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [purchaseComplete, setPurchaseComplete] = useState(false);
-  const { insertData, loading } = useSupabase();
+  const { createGiftCard, loading } = useGiftCard();
   const { toast } = useToast();
 
   const predefinedAmounts = [5000, 10000, 15000, 20000, 25000, 50000, 75000, 100000];
@@ -105,10 +105,19 @@ const GiftCardPage = () => {
   const onSubmit = async (data: GiftCardForm) => {
     const amount = getFinalAmount();
     
-    if (!amount || amount < 1000) {
+    if (!amount || amount < 500) {
       toast({
         title: "Invalid Amount",
-        description: "Gift card amount must be at least ₦1,000",
+        description: "Gift card amount must be at least ₦500",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (amount > 100000) {
+      toast({
+        title: "Invalid Amount",
+        description: "Gift card amount cannot exceed ₦100,000",
         variant: "destructive",
       });
       return;
@@ -117,37 +126,18 @@ const GiftCardPage = () => {
     setIsProcessing(true);
 
     try {
-      // Generate a unique gift card code
-      const giftCardCode = `GC${Date.now()}${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
+      // Use the proper createGiftCard function
+      const giftCard = await createGiftCard(amount);
       
-      // Prepare gift card data for Supabase
-      const giftCardData = {
-        code: giftCardCode,
-        amount: amount,
-        recipient_name: data.recipientName,
-        recipient_email: data.recipientEmail,
-        sender_name: data.senderName,
-        sender_email: data.senderEmail,
-        message: data.message || '',
-        design: selectedDesign.id,
-        delivery_date: data.deliveryDate || new Date().toISOString().split('T')[0],
-        status: 'active',
-        balance: amount,
-        created_at: new Date().toISOString(),
-      };
-
-      // Insert into Supabase (you'll need to create a 'gift_cards' table)
-      const result = await insertData('gift_cards', giftCardData);
-      
-      if (result) {
+      if (giftCard) {
         setPurchaseComplete(true);
         toast({
           title: "Gift Card Purchased Successfully! 🎉",
-          description: `Gift card code: ${giftCardCode}`,
+          description: `Gift card code: ${giftCard.code}`,
         });
         reset();
       } else {
-        throw new Error('Failed to process gift card purchase');
+        throw new Error('Failed to create gift card');
       }
     } catch (error) {
       console.error('Gift card purchase error:', error);
